@@ -2,6 +2,15 @@
 # Go-sample
 ################################################################################
 
+.PHONY: wire
+wire:
+	@ cd framework/registry/injector && wire .
+
+.PHONY: init-tools
+init-tools:
+	# wire
+	@ go install github.com/google/wire/cmd/wire@latest
+
 
 ################################################################################
 # Docker
