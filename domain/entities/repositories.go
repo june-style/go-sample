@@ -2,15 +2,6 @@ package entities
 
 import "context"
 
-type Repository struct {
-	// tx
-	DynamoDB DynamoDB
-	// users
-	RegisteredUser RegisteredUserRepository
-	UserProfile    UserProfileRepository
-	UserSession    UserSessionRepository
-}
-
 //go:generate mockgen -source=${GOFILE} -destination=./mock/${GOFILE} -package=${GOPACKAGE}_mock
 type RegisteredUserRepository interface {
 	Find(ctx context.Context, accessKey string) (*RegisteredUser, error)

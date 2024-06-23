@@ -10,7 +10,7 @@ Good luck with this encounter!
 ## At the first startup
 1. make compose-up
 2. make login-devcontainer
-3. make init-tools
+3. make init
 4. make db
 5. make grpc-list
 

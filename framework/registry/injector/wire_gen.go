@@ -9,10 +9,12 @@ package injector
 import (
 	"context"
 	"github.com/june-style/go-sample/domain/dconfig"
+	"github.com/june-style/go-sample/domain/entities"
 	"github.com/june-style/go-sample/interface/gateways/aws"
 	"github.com/june-style/go-sample/interface/gateways/aws/dynamodb"
 	"github.com/june-style/go-sample/interface/gateways/aws/sqs"
 	"github.com/june-style/go-sample/interface/gateways/redis"
+	"github.com/june-style/go-sample/interface/repositories"
 )
 
 // Injectors from wire.go:
@@ -40,10 +42,45 @@ func InitDBClient(ctx context.Context, cfg *dconfig.Config) (*DBClient, error) {
 	return dbClient, nil
 }
 
+func InitAPI(dbClient *DBClient) (*API, error) {
+	config := dbClient.Config
+	client := dbClient.Aws
+	dynamoDB := repositories.NewDynamoDBTx(client)
+	registeredUserRepository, err := repositories.NewRegisteredUserRepository(config, client)
+	if err != nil {
+		return nil, err
+	}
+	userProfileRepository, err := repositories.NewUserProfileRepository(config, client)
+	if err != nil {
+		return nil, err
+	}
+	redisClient := dbClient.Redis
+	userSessionRepository, err := repositories.NewUserSessionRepository(redisClient)
+	if err != nil {
+		return nil, err
+	}
+	repository := &entities.Repository{
+		DynamoDB:       dynamoDB,
+		RegisteredUser: registeredUserRepository,
+		UserProfile:    userProfileRepository,
+		UserSession:    userSessionRepository,
+	}
+	api := &API{
+		Config:     config,
+		Repository: repository,
+	}
+	return api, nil
+}
+
 // wire.go:
 
 type DBClient struct {
 	Config *dconfig.Config
 	Aws    *aws.Client
 	Redis  *redis.Client
+}
+
+type API struct {
+	Config     *dconfig.Config
+	Repository *entities.Repository
 }
