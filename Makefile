@@ -6,6 +6,15 @@
 db:
 	@ go run tools/schemas/dynamodb/*.go
 
+.PHONY: proto
+proto:
+	@ cd framework/protocol && protoc \
+		-I proto \
+		--go_out ./pb --go_opt paths=source_relative \
+		--go-grpc_out ./pb --go-grpc_opt paths=source_relative \
+		--grpc-gateway_out ./pb --grpc-gateway_opt paths=source_relative \
+		proto/*.proto
+
 .PHONY: wire
 wire:
 	@ cd framework/registry/injector && wire .
@@ -18,6 +27,13 @@ init:
 	@ go install github.com/golang/mock/mockgen@v1.6.0
 	# wire
 	@ go install github.com/google/wire/cmd/wire@latest
+	# protoc
+	@ go get github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway
+	@ go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
+	@ go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	# post process
+	@ go mod tidy
 
 
 ################################################################################

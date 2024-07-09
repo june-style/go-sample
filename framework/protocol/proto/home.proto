@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "github.com/june-style/go-sample/framework/protocol/pb";
+
+import "api.proto";
+import "google/api/annotations.proto";
+
+service HomeService {
+	rpc Get (HomeGetRequest) returns (HomeGetResponse) {
+		option (google.api.http) = {
+			get: "/v1/home/get"
+		};
+		option (admin) = {
+			disableToAuthAccessKey: false
+			disableToAuthSessionId: false
+		};
+	}
+}
+
+message HomeGetRequest {}
+
+message HomeGetResponse {
+	User user = 1;
+}
