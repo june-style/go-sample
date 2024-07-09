@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"github.com/google/wire"
+	"github.com/june-style/go-sample/application/usecases"
 	"github.com/june-style/go-sample/domain/dconfig"
 	"github.com/june-style/go-sample/domain/entities"
 	"github.com/june-style/go-sample/framework/registry/provider"
@@ -25,8 +26,9 @@ func InitDBClient(ctx context.Context, cfg *dconfig.Config) (*DBClient, error) {
 
 type DBClient struct {
 	Config *dconfig.Config
-	Aws    *aws.Client
-	Redis  *redis.Client
+
+	Aws   *aws.Client
+	Redis *redis.Client
 }
 
 func InitAPI(dbClient *DBClient) (*API, error) {
@@ -41,6 +43,8 @@ func InitAPI(dbClient *DBClient) (*API, error) {
 }
 
 type API struct {
-	Config     *dconfig.Config
+	Config *dconfig.Config
+
 	Repository *entities.Repository
+	UseCase    *usecases.UseCase
 }

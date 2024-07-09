@@ -8,6 +8,8 @@ package injector
 
 import (
 	"context"
+	"github.com/june-style/go-sample/application/interactors"
+	"github.com/june-style/go-sample/application/usecases"
 	"github.com/june-style/go-sample/domain/dconfig"
 	"github.com/june-style/go-sample/domain/entities"
 	"github.com/june-style/go-sample/interface/gateways/aws"
@@ -65,9 +67,16 @@ func InitAPI(dbClient *DBClient) (*API, error) {
 		UserProfile:    userProfileRepository,
 		UserSession:    userSessionRepository,
 	}
+	home := interactors.NewHome(repository)
+	sign := interactors.NewSign(config, repository)
+	useCase := &usecases.UseCase{
+		Home: home,
+		Sign: sign,
+	}
 	api := &API{
 		Config:     config,
 		Repository: repository,
+		UseCase:    useCase,
 	}
 	return api, nil
 }
@@ -76,11 +85,14 @@ func InitAPI(dbClient *DBClient) (*API, error) {
 
 type DBClient struct {
 	Config *dconfig.Config
-	Aws    *aws.Client
-	Redis  *redis.Client
+
+	Aws   *aws.Client
+	Redis *redis.Client
 }
 
 type API struct {
-	Config     *dconfig.Config
+	Config *dconfig.Config
+
 	Repository *entities.Repository
+	UseCase    *usecases.UseCase
 }
