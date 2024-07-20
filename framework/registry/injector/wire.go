@@ -10,6 +10,7 @@ import (
 	"github.com/june-style/go-sample/application/usecases"
 	"github.com/june-style/go-sample/domain/dconfig"
 	"github.com/june-style/go-sample/domain/entities"
+	"github.com/june-style/go-sample/domain/services"
 	"github.com/june-style/go-sample/framework/registry/provider"
 	"github.com/june-style/go-sample/interface/controllers"
 	"github.com/june-style/go-sample/interface/gateways/aws"
@@ -48,5 +49,6 @@ type API struct {
 
 	Controller *controllers.Controller
 	Repository *entities.Repository
+	Service    *services.Service
 	UseCase    *usecases.UseCase
 }

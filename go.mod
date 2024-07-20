@@ -10,6 +10,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.31.1
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.31.4
 	github.com/caarlos0/env/v11 v11.0.0
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-resty/resty/v2 v2.12.0
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.6.0

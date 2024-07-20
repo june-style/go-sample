@@ -12,6 +12,7 @@ import (
 	"github.com/june-style/go-sample/application/usecases"
 	"github.com/june-style/go-sample/domain/dconfig"
 	"github.com/june-style/go-sample/domain/entities"
+	"github.com/june-style/go-sample/domain/services"
 	"github.com/june-style/go-sample/interface/controllers"
 	"github.com/june-style/go-sample/interface/gateways/aws"
 	"github.com/june-style/go-sample/interface/gateways/aws/dynamodb"
@@ -80,10 +81,22 @@ func InitAPI(dbClient *DBClient) (*API, error) {
 		Home: controllersHome,
 		Sign: controllersSign,
 	}
+	authorizer := services.NewAuthorizer(config, repository)
+	jwTer := services.NewJWTer(config)
+	timer, err := services.NewTimer(config, repository)
+	if err != nil {
+		return nil, err
+	}
+	service := &services.Service{
+		Authorizer: authorizer,
+		JWTer:      jwTer,
+		Timer:      timer,
+	}
 	api := &API{
 		Config:     config,
 		Controller: controller,
 		Repository: repository,
+		Service:    service,
 		UseCase:    useCase,
 	}
 	return api, nil
@@ -103,5 +116,6 @@ type API struct {
 
 	Controller *controllers.Controller
 	Repository *entities.Repository
+	Service    *services.Service
 	UseCase    *usecases.UseCase
 }

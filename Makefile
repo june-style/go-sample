@@ -35,6 +35,10 @@ init:
 	# post process
 	@ go mod tidy
 
+.PHONY: dotenv
+dotenv:
+	@ sh ./make-dotenv.sh
+
 
 ################################################################################
 # Docker
