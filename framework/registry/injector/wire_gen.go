@@ -12,6 +12,7 @@ import (
 	"github.com/june-style/go-sample/application/usecases"
 	"github.com/june-style/go-sample/domain/dconfig"
 	"github.com/june-style/go-sample/domain/entities"
+	"github.com/june-style/go-sample/interface/controllers"
 	"github.com/june-style/go-sample/interface/gateways/aws"
 	"github.com/june-style/go-sample/interface/gateways/aws/dynamodb"
 	"github.com/june-style/go-sample/interface/gateways/aws/sqs"
@@ -73,8 +74,15 @@ func InitAPI(dbClient *DBClient) (*API, error) {
 		Home: home,
 		Sign: sign,
 	}
+	controllersHome := controllers.NewHome(useCase)
+	controllersSign := controllers.NewSign(useCase)
+	controller := &controllers.Controller{
+		Home: controllersHome,
+		Sign: controllersSign,
+	}
 	api := &API{
 		Config:     config,
+		Controller: controller,
 		Repository: repository,
 		UseCase:    useCase,
 	}
@@ -93,6 +101,7 @@ type DBClient struct {
 type API struct {
 	Config *dconfig.Config
 
+	Controller *controllers.Controller
 	Repository *entities.Repository
 	UseCase    *usecases.UseCase
 }

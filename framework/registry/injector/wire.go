@@ -11,6 +11,7 @@ import (
 	"github.com/june-style/go-sample/domain/dconfig"
 	"github.com/june-style/go-sample/domain/entities"
 	"github.com/june-style/go-sample/framework/registry/provider"
+	"github.com/june-style/go-sample/interface/controllers"
 	"github.com/june-style/go-sample/interface/gateways/aws"
 	"github.com/june-style/go-sample/interface/gateways/redis"
 )
@@ -45,6 +46,7 @@ func InitAPI(dbClient *DBClient) (*API, error) {
 type API struct {
 	Config *dconfig.Config
 
+	Controller *controllers.Controller
 	Repository *entities.Repository
 	UseCase    *usecases.UseCase
 }
