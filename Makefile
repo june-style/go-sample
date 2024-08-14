@@ -32,12 +32,18 @@ init:
 	@ go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
 	@ go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 	@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	# grpcurl
+	@ go install github.com/fullstorydev/grpcurl/cmd/grpcurl@latest
 	# post process
 	@ go mod tidy
 
 .PHONY: dotenv
 dotenv:
 	@ sh ./make-dotenv.sh
+
+.PHONY: grpc-list
+grpc-list:
+	@ grpcurl -plaintext local-api:9000 list
 
 
 ################################################################################
@@ -58,4 +64,4 @@ compose-down:
 
 .PHONY: login-devcontainer
 login-devcontainer:
-	@ docker exec -it go /bin/bash
+	@ docker-compose -f docker-compose.yml exec -it go-development /bin/bash
