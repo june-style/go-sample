@@ -24,7 +24,8 @@ func Test_New(t *testing.T) {
 			DebugMode:       false,
 		},
 		Grpc: dconfig.Grpc{
-			Port: 9000,
+			Port:        9000,
+			GatewayPort: 8080,
 		},
 		Redis: dconfig.Redis{
 			Server:   "redis:6379",

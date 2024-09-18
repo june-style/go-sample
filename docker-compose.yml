@@ -23,6 +23,20 @@ services:
       - redis
       - localstack
 
+  local-api-gateway:
+    build:
+      context: .
+      dockerfile: ./cmd/client/Dockerfile
+    ports:
+      - 127.0.0.1:8080:8080
+    volumes:
+      - ./:/go/src/github.com/june-style/go-sample:default
+    networks:
+      - internal
+      - external
+    depends_on:
+      - local-api
+
   redis:
     image: redis:latest
     ports:
