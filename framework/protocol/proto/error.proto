@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "github.com/june-style/go-sample/framework/protocol/pb";
+
+message ErrorDetail {
+	int32 code = 1;
+	string msg = 2;
+	repeated string stacktrace = 3;
+}

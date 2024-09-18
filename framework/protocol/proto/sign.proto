@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "github.com/june-style/go-sample/framework/protocol/pb";
+
+import "api.proto";
+import "google/api/annotations.proto";
+
+service SignService {
+	rpc In (SignInRequest) returns (SignInResponse) {
+		option (google.api.http) = {
+			get: "/v1/sign/in"
+		};
+		option (admin) = {
+			disableToAuthAccessKey: false
+			disableToAuthSessionId: true
+		};
+	}
+	rpc Up (SignUpRequest) returns (SignUpResponse) {
+		option (google.api.http) = {
+			post: "/v1/sign/up"
+			body: "*"
+		};
+		option (admin) = {
+			disableToAuthAccessKey: true
+			disableToAuthSessionId: true
+		};
+	}
+}
+
+message SignInRequest {}
+
+message SignInResponse {
+	string session_id = 1;
+}
+
+message SignUpRequest {
+	string sign = 1;
+}
+
+message SignUpResponse {
+	string access_key = 1;
+}

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "github.com/june-style/go-sample/framework/protocol/pb";
+
+// https://github.com/protocolbuffers/protobuf/tree/main/src/google/protobuf
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/timestamp.proto";
+
+message User {
+	string id = 1;
+	string name = 2;
+	google.protobuf.Timestamp created_at = 3;
+}
+
+message Admin {
+	bool disableToAuthAccessKey = 1;
+	bool disableToAuthSessionId = 2;
+}
+
+extend google.protobuf.MethodOptions {
+	Admin admin = 50000;
+}
