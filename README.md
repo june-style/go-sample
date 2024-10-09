@@ -43,3 +43,17 @@ The Go-API directory structure is shown below.
 ### Etc
 - cmd
 - tools
+
+## Sample cURL commands
+1. sign up
+```
+TODO
+```
+2. sign in
+```
+TODO
+```
+3. home get
+```
+TODO
+```
