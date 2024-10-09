@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/june-style/go-sample/domain/dconfig"
 	"github.com/june-style/go-sample/domain/dcontext"
 	"github.com/june-style/go-sample/domain/derrors"
@@ -28,10 +28,6 @@ type JWTer interface {
 var (
 	ErrJWTTokenIsInvalid                 = derrors.NewUnauthenticated("JWT token is invalid")
 	ErrJWTTokenIsUnexpectedSigningMethod = derrors.NewUnauthenticated("JWT token is unexpected signing method")
-	ErrJWTTokenIsInvalidAudience         = derrors.NewUnauthenticated("JWT token is invalid audience")
-	ErrJWTTokenIsExpired                 = derrors.NewUnauthenticated("JWT token is expired")
-	ErrJWTTokenIsBeforeExpiry            = derrors.NewUnauthenticated("JWT token is before expiry")
-	ErrJWTTokenIsInvalidIssuer           = derrors.NewUnauthenticated("JWT token is invalid issuer")
 )
 
 type jwterImpl struct {
@@ -47,10 +43,10 @@ func (j *jwterImpl) Create(ctx context.Context) (string, error) {
 		return "", derrors.Wrap(err)
 	}
 
-	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-		Audience:  dcontext.GetAuthenticatedUserID(ctx),
-		ExpiresAt: now.Add(j.expireTime).Unix(),
-		IssuedAt:  now.Unix(),
+	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+		Audience:  jwt.ClaimStrings{dcontext.GetAuthenticatedUserID(ctx)},
+		ExpiresAt: jwt.NewNumericDate(now.Add(j.expireTime)),
+		IssuedAt:  jwt.NewNumericDate(now),
 		Issuer:    j.issuer,
 	})
 	token, err := jwtToken.SignedString(j.hmacSecret)
@@ -73,29 +69,18 @@ func (j *jwterImpl) Verify(ctx context.Context, token string) error {
 			return nil, derrors.Wrapf(ErrJWTTokenIsUnexpectedSigningMethod, "signing-method is %s", jwtToken.Header["alg"])
 		}
 		return j.hmacSecret, nil
-	})
+	},
+		jwt.WithTimeFunc(func() time.Time { return now }),
+		jwt.WithAudience(dcontext.GetAuthenticatedUserID(ctx)),
+		jwt.WithExpirationRequired(),
+		jwt.WithIssuedAt(),
+		jwt.WithIssuer(j.issuer),
+	)
 	if err != nil {
 		return derrors.Wrap(err)
 	}
 	if !jwtToken.Valid {
 		return derrors.Wrap(ErrJWTTokenIsInvalid)
-	}
-
-	if claims, ok := jwtToken.Claims.(jwt.StandardClaims); !ok {
-		return derrors.Wrap(ErrJWTTokenIsInvalid)
-	} else {
-		if !claims.VerifyAudience(dcontext.GetAuthenticatedUserID(ctx), false) {
-			return derrors.Wrap(ErrJWTTokenIsInvalidAudience)
-		}
-		if !claims.VerifyExpiresAt(now.Unix(), false) {
-			return derrors.Wrap(ErrJWTTokenIsExpired)
-		}
-		if !claims.VerifyIssuedAt(now.Unix(), false) {
-			return derrors.Wrap(ErrJWTTokenIsBeforeExpiry)
-		}
-		if !claims.VerifyIssuer(j.issuer, false) {
-			return derrors.Wrap(ErrJWTTokenIsInvalidIssuer)
-		}
 	}
 
 	return nil
