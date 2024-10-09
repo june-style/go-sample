@@ -84,7 +84,7 @@ func Test_MinMaxNormalization_Get(t *testing.T) {
 			n := entities.NewMinMaxNormalization(tt.fields.values...)
 			got, err := n.Get(tt.args.value)
 			if !tt.wantErr(t, err) {
-				assert.Fail(t, "failed to MinMaxNormalization.Get(%f)", tt.args.value)
+				return
 			}
 			assert.Equal(t, tt.want, got)
 		})
@@ -168,7 +168,7 @@ func Test_ZScoreNormalization_Get(t *testing.T) {
 			n := entities.NewZScoreNormalization(tt.fields.values...)
 			got, err := n.Get(tt.args.value)
 			if !tt.wantErr(t, err) {
-				assert.Fail(t, "failed to ZScoreNormalization.Get(%f)", tt.args.value)
+				return
 			}
 			assert.Equal(t, tt.want, got)
 		})
